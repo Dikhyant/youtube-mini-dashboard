@@ -12,7 +12,6 @@ export async function GET(req: Request) {
   const accessToken = (session as any).accessToken;
 
   try {
-    // Step 1: get uploads playlist
     const channelRes = await fetch(
       "https://www.googleapis.com/youtube/v3/channels?part=contentDetails&mine=true",
       { headers: { Authorization: `Bearer ${accessToken}` } }
@@ -20,7 +19,6 @@ export async function GET(req: Request) {
     const channelData = await channelRes.json();
     const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
 
-    // Step 2: fetch videos from uploads playlist
     const playlistRes = await fetch(
       `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet,contentDetails&playlistId=${uploadsPlaylistId}&maxResults=50`,
       { headers: { Authorization: `Bearer ${accessToken}` } }
