@@ -41,7 +41,7 @@ export default function CommentUI ({
                     setIsReplyInputActive(false)
                     formData.set("reply","")
                 }} >
-                    <input name="reply" />
+                    <input name="reply" className="border border-gray-400" />
                     <button className="ml-auto" type="submit" >Reply</button>
                     <button className="ml-2" onClick={() => setIsReplyInputActive(false)} >Cancel</button>
                 </form>
