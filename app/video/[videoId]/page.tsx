@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {youtube_v3} from "googleapis"
 import CommentUI from "@/app/components/CommentUI";
@@ -24,6 +24,7 @@ type Comment = {
 
 export default function VideoPage() {
   const params = useParams();
+  const router = useRouter();
   const videoId = params.videoId;
 
   const [video, setVideo] = useState<Video | null>(null);
@@ -33,7 +34,6 @@ export default function VideoPage() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
 
-  // Fetch video details
   useEffect(() => {
     async function fetchVideo() {
       try {
@@ -53,7 +53,6 @@ export default function VideoPage() {
     fetchVideo();
   }, [videoId]);
 
-  // Fetch comments
   useEffect(() => {
     if(!videoPlayId) return
     async function fetchComments() {
@@ -78,17 +77,22 @@ export default function VideoPage() {
     fetchComments();
   }, [videoPlayId]);
 
-  // Update title/description
+
   async function handleUpdate() {
-    await fetch("/api/video", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ videoId, title, description }),
-    });
-    alert("Updated successfully!");
+    try {
+      await fetch(`/api/video/${videoPlayId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ videoPlayId, title, description }),
+      });
+      alert("Updated successfully!");
+      window.location.reload()
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update video");
+  }
   }
 
-  // Add comment
   async function handleAddComment() {
     const res = await fetch("/api/comments", {
       method: "POST",
@@ -105,7 +109,6 @@ export default function VideoPage() {
     setNewComment("");
   }
 
-  // Delete comment
   async function handleDeleteComment(commentId: string) {
     await fetch("/api/comments", {
       method: "DELETE",
