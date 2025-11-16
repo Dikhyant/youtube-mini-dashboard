@@ -145,7 +145,7 @@ export default function VideoPage() {
     await fetch("/api/comments", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ replyId }),
+      body: JSON.stringify({ commentId: replyId }),
     });
     setComments((prev) => {
       const newState = [...prev]
